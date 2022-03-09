@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link href="/user/signup.css" type="text/css" rel="stylesheet"> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js">
+    </script>
+    <script type="text/javascript">
+        // axios.defaults.baseURL = 'https://localhost/4001'
+
+        //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_template3
+        // const userinfo = ['a','b','c'];
+        // function insertContent() {
+        //     const temp = documnet.querySelector('template')[0];
+        //     const item = temp.content.querySelector('div');
+        //     for(i=0; i < userinfo.length; i++){
+        //         const a = document.importNode(item, true);
+        //         a.textContent += userinfo[i];
+        //         document.body.appendChild(a);
+        //     }
+        // }
+
+
+        document.addEventListener('DOMContentLoaded', init)
+        function init() {
+            //form
+            const frm = document.querySelector('#signupFrm')
+            frm.addEventListener('submit', submitHandler)
+
+            async function submitHandler(e) {
+                e.preventDefault()
+
+                // const inputs = document.querySelectorAll('input[type=text],input[type=radio]:checked')
+
+                const userid = document.querySelector('#userid').value
+                const userpw = document.querySelector('#userpw').value
+                const name = document.querySelector('#name').value
+                const nickname = document.querySelector('#nickname').value
+                const dob = document.querySelector('#dob').value
+                const gender_kor = document.querySelector('input[type=radio]:checked').value
+                let gender
+                if(gender_kor == '남성'){
+                    gender = 'M'
+                } else { gender = 'F' }
+                const mobile = document.querySelector('#mobile').value
+                const email = document.querySelector('#email').value
+                const data = {
+                    userid,
+                    userpw,
+                    name,
+                    nickname,
+                    dob,
+                    gender,
+                    mobile,
+                    email,
+                    header: { 'Content-Type': 'application/json' }
+                }
+
+                // const a = await axios.options('/user/singup','param=1')
+                const response = await axios.post('http://localhost:4001/api/user/signup', data)
+                console.log(response.data)
+            }
+
+            //idcheck
+            const btn = document.querySelector('#idcheckBtn')
+            const userid = document.querySelector('#userid')
+            const msg = document.querySelector('#msg')
+            btn.addEventListener('click', btnHandler)
+
+                async function btnHandler() {
+                try {
+                    const data = {
+                        userid: userid.value,
+                        header: { 'Content-Type': 'application/json' }
+                    }
+                    const response = await axios.post('http://localhost:4001/api/user/idcheck', data)
+                    console.log(response.data)
+                    if (response.data.result == 0) throw new ERROR('아이디가 중복입니다.')
+                    msg.innerHTML = '사용가능한 아이디입니다'
+                }
+                catch {
+                    msg.innerHTML = '사용 불가능한 아이디입니다'
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="center class_signupFrm">
+        <form method="post" action="/" id="signupFrm">
+            <table>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="userid" id="userid" placeholder="아이디">
+                        </sapn>
+                        <input type="button" id="idcheckBtn" value="중복체크">
+                        <span id ="msg"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="userpw" id="userpw" placeholder="비밀번호">
+                        </sapn>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="name" id="name" placeholder="이름">
+                        </sapn>
+    
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="nickname" id="nickname" placeholder="별명">
+                        </sapn>
+    
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="dob" id="dob" placeholder="생년월일">
+                        </sapn>
+    
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <div>
+                            <span>성별 : </span>
+                            <input type="radio" name="gender" value ="여성" id="gender1" checked><label for="gender1">여성</label>
+                            <input type="radio" name="gender" value = "남성" id="gender2"><label for="gender2">남성</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="mobile" id="mobile" placeholder="휴대폰 번호">
+                        </sapn>
+    
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signupRow">
+                        <sapn>
+                            <input class="signupInput" type="text" name="email" id="email" placeholder="이메일(선택사항)">
+                        </sapn>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="회원가입">
+        </form>
+    </div>
+    </body>
+    
+    </html>
