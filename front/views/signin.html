@@ -5,8 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type = "text/javascript">
+        
+        document.addEventListener('DOMContentLoaded',init)
+        function init (){
+            axios.defaults.baseURL = 'http://localhost:4001/api/user'
+            const frm = document.querySelector('#signInFrm')
+
+            frm.addEventListener('click', clickHandler)
+
+            async function clickHandler(e){
+                e.preventDefault()
+                const msg = document.querySelector('.msg')
+                const userid = document.querySelector('#userid').value
+                const userpw = document.querySelector('#userpw').value
+                const data = {
+                    userid,
+                    userpw,
+                    header: { 'Content-Type': 'application/json' }
+                }
+                try {
+                    const response = await axios.post('/signin', data)
+                    if(response.data.errno === 0 ) throw new Error;
+                    alert(`${response.data.result.user_id}님 환영합니다.`)
+                    
+                    // location.href ='/'
+                } catch (e) {
+                    console.log(e.message,'회원가입불가')
+                    msg.innerHTML = '로그인 정보를 확인해주세요'
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    
+    <div>
+        <form method="post" action = "/" id = "signInFrm">
+            <span class = "msg"></span>
+            <ul>
+                <li>
+                    <span>아이디 : </span>
+                    <span>
+                        <input type="text" name="userid" id="userid" placeholder="아이디를 입력해주세요.">
+                    </span>
+                </li>
+                <li>
+                    <span>비밀번호 : </span>
+                    <span>
+                        <input type="text" name="userpw" id="userpw" placeholder="비밀번호를 입력해주세요.">
+                    </span>
+                </li>
+            </ul>
+            <span class = "sbm">
+                <input type = "submit" value = "로그인">
+            </span>
+        </form>
+    </div>
 </body>
 </html>

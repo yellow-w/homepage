@@ -7,10 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <!-- <link href="/user/signup.css" type="text/css" rel="stylesheet"> -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js">
-    </script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
-        // axios.defaults.baseURL = 'https://localhost/4001'
 
         //https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_template3
         // const userinfo = ['a','b','c'];
@@ -27,10 +25,13 @@
 
         document.addEventListener('DOMContentLoaded', init)
         function init() {
+            axios.defaults.baseURL = 'http://localhost:4001/api/user'
+
             //form
-            const frm = document.querySelector('#signupFrm')
+            const frm = document.querySelector('#signUpFrm')
             frm.addEventListener('submit', submitHandler)
 
+            
             async function submitHandler(e) {
                 e.preventDefault()
 
@@ -41,9 +42,9 @@
                 const name = document.querySelector('#name').value
                 const nickname = document.querySelector('#nickname').value
                 const dob = document.querySelector('#dob').value
-                const gender_kor = document.querySelector('input[type=radio]:checked').value
+                const genderKr = document.querySelector('input[type=radio]:checked').value
                 let gender
-                if(gender_kor == '남성'){
+                if (genderKr == '남성') {
                     gender = 'M'
                 } else { gender = 'F' }
                 const mobile = document.querySelector('#mobile').value
@@ -61,8 +62,15 @@
                 }
 
                 // const a = await axios.options('/user/singup','param=1')
-                const response = await axios.post('http://localhost:4001/api/user/signup', data)
-                console.log(response.data)
+                try {
+                    const response = await axios.post('/signup', data)
+                    if( response.data.errno === 0 ) throw new Error;
+                    alert('회원가입이 완료되었습니다.')
+                    location.href='/'
+                } catch (e) {
+                    console.log(e.message)
+                    alert('회원가입이 불가능합니다. 가입 정보를 다시한번 확인해주세요')
+                }
             }
 
             //idcheck
@@ -71,19 +79,19 @@
             const msg = document.querySelector('#msg')
             btn.addEventListener('click', btnHandler)
 
-                async function btnHandler() {
+            async function btnHandler() {
                 try {
                     const data = {
                         userid: userid.value,
                         header: { 'Content-Type': 'application/json' }
                     }
-                    const response = await axios.post('http://localhost:4001/api/user/idcheck', data)
-                    console.log(response.data)
-                    if (response.data.result == 0) throw new ERROR('아이디가 중복입니다.')
-                    msg.innerHTML = '사용가능한 아이디입니다'
+                    const response = await axios.post('/idcheck', data)
+                    if (response.data.errno === 0) throw new ERROR('아이디가 중복입니다.');
+                    msg.innerHTML = `${response.data.result}는 사용가능한 아이디입니다`
                 }
-                catch {
-                    msg.innerHTML = '사용 불가능한 아이디입니다'
+                catch (e) {
+                    console.log(e.message)
+                    msg.innerHTML = `입력한 아이디는 사용이 불가능한 아이디입니다`
                 }
             }
         }
@@ -92,7 +100,7 @@
 
 <body>
     <div class="center class_signupFrm">
-        <form method="post" action="/" id="signupFrm">
+        <form method="post" action="/" id="signUpFrm">
             <table>
                 <tr>
                     <td class="signupRow">
