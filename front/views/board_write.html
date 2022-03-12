@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <script type="text/javascript" src="../onLoaded/board_write.js"></script> -->
+</head>
+
+<body>
+    <form method="post" action="/" id="write_frm">
+        <table>
+            <tr>
+                <td>
+                    <span> 제목 : </span>
+                    <span>
+                        <input type="text" id="subject">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span> 내용 : </span>
+                    <span>
+                        <input type="textarea" id="content">
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="글작성">
+    </form>
+    <script type="text/javascript">
+        const frm = document.querySelector('#write_frm')
+        frm.addEventListener('submit', submitHandler)
+
+        async function submitHandler(e) {
+            e.preventDefault()
+            axios.defaults.baseURL = 'http://localhost:4001/api/board'
+
+            const subject = document.querySelector('#subject').value
+            const content = document.querySelector('#content').value
+            const data = {
+                subject,
+                content
+            }
+            try {
+                const response = await axios.post('/write', data, {
+                    'Content-Type': 'application/json',
+                    withCredentials: true
+                })
+                if (response.data.errno === 0) throw new Error;
+                const insertId = response.data.result.insertId
+                location.href=`/board/view/${insertId}`
+            } catch (e) {
+                console.log(e.message)
+                subject.value=''
+                content.value=''
+            }
+        }
+    </script>
+</body>
+
+</html>

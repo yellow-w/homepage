@@ -23,14 +23,15 @@
                 const data = {
                     userid,
                     userpw,
-                    header: { 'Content-Type': 'application/json' }
                 }
                 try {
-                    const response = await axios.post('/signin', data)
-                    if(response.data.errno === 0 ) throw new Error;
+                    const response = await axios.post('/signin', data,{
+                        'Content-Type': 'application/json',
+                        withCredentials: true
+                    })
+                    if(response.data.errno === 1 ) throw new Error;
                     alert(`${response.data.result.user_id}님 환영합니다.`)
-                    
-                    // location.href ='/'
+                    location.href ='/'
                 } catch (e) {
                     console.log(e.message,'회원가입불가')
                     msg.innerHTML = '로그인 정보를 확인해주세요'

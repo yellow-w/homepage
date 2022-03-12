@@ -64,7 +64,7 @@
                 // const a = await axios.options('/user/singup','param=1')
                 try {
                     const response = await axios.post('/signup', data)
-                    if( response.data.errno === 0 ) throw new Error;
+                    if( response.data.errno === 1 ) throw new Error;
                     alert('회원가입이 완료되었습니다.')
                     location.href='/'
                 } catch (e) {
@@ -86,7 +86,7 @@
                         header: { 'Content-Type': 'application/json' }
                     }
                     const response = await axios.post('/idcheck', data)
-                    if (response.data.errno === 0) throw new ERROR('아이디가 중복입니다.');
+                    if (response.data.errno === 1) throw new ERROR('아이디가 중복입니다.');
                     msg.innerHTML = `${response.data.result}는 사용가능한 아이디입니다`
                 }
                 catch (e) {
