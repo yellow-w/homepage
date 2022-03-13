@@ -12,5 +12,5 @@ exports.view = (req, res) => {
 }
 
 exports.update = (req, res) => {
-    res.render('board_update')
+    res.render('board_write')
 }

@@ -14,4 +14,14 @@ CREATE TABLE users (
     user_dos TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (user_id),
     UNIQUE KEY (user_mobile)
-) ;
+) CHARSET = utf8;
+
+CREATE TABLE board (
+    board_idx INT AUTO_INCREMENT,
+    user_nickname VARCHAR(20) NOT NULL ,
+    board_subject VARCHAR(50) NOT NULL,
+    board_content TEXT ,
+    board_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    board_hit INT DEFAULT 0 NOT NULL,
+    PRIMARY KEY(board_idx)
+) CHARSET = utf8mb4;

@@ -1,6 +1,7 @@
 const crypto = require('crypto')
+const salt = process.env.SALT
 
-function createToken (state,salt){
+function createToken (state){
     const header = {
         typ:'JWT',
         alg:'HS256'
@@ -12,21 +13,23 @@ function createToken (state,salt){
 
     const encodedHeader = encoding(header)
     const encodedPayload = encoding(payload)
-
-    function encoding(param){
-        Buffer.from(JSON.stringify(param)).toString('base64').replace(/[=]/g,'')
-    }
-
-    const signature = createSignature(encodedHeader,encodedPayload,salt)
-    return jwt = `${encodedHeader}.${encodedPayload}.${signature}`
+    const signature = createSignature(encodedHeader,encodedPayload)
+    
+    return `${encodedHeader}.${encodedPayload}.${signature}`
 }
 
 
-function createSignature(header,payload,salt){
-    crypto.createHmac('sha256',Buffer.from(salt))
-    .update(header,payload)
-    .digest('base64')
-    .replace(/[=]/g,'')
+function encoding(param){
+    return Buffer.from(JSON.stringify(param))
+                .toString('base64')
+                .replace(/[=]/g,'')
+}
+
+function createSignature(header,payload){
+    return crypto.createHmac('sha256',salt)
+            .update(header,payload)
+            .digest('base64')
+            .replace(/[=]/g,'')
 }
 
 

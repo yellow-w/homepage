@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <main class="boardBox">
+        <table>
+            <thead>
+                <tr>
+                    <th class="board_subject view_value" colspan="4">제목</th>
+                </tr>
+                <tr>
+                    <td>by</td>
+                    <th class="board_nickname view_value">닉네임</th>
+                    <th class="board_date view_value">날짜</th>
+                    <th calss="board_hit view_value">조회수</th>
+                </tr>
+            </thead>
+            <tbody class="board_content view_value">
+                <tr>
+                    <td>내용</td>
+                </tr>
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+        <span>
+            <input type="button" value="수정하기" id="updateBtn">
+        </span>
+        <span>
+            <form method="post" action="/" id="deleteFrm">
+                <input type="submit" value="삭제하기">
+            </form>
+        </span>
+    </main>
+
+    <script type="text/javascript">
+        const [, , , board_idx] = location.pathname.split('/')
+        document.addEventListener('DOMContentLoaded', init)
+
+        axios.defaults.baseURL = 'http://localhost:4001/api/board'
+        const body = {
+            board_idx
+        }
+
+
+        async function init() {
+            const boardViews = document.querySelectorAll('.view_value')
+
+            try {
+                const response = await axios.post('/view', body, {
+                    'Content-Type': 'application/json',
+                    withCredentials: true
+                })
+                if (response.data.errno === 1) throw new Error('view 불러오기 에러');
+
+                const { board_subject, user_nickname, board_date, board_hit } = response.data.result
+
+                boardViews[0].innerHTML = board_subject
+                boardViews[1].innerHTML = user_nickname
+                boardViews[2].innerHTML = board_date
+                boardViews[3].innerHTML = board_hit
+
+            } catch (e) {
+                console.log(e.message)
+            }
+
+            //update
+            const updateBtn = document.querySelector('#updateBtn')
+            updateBtn.addEventListener('click', clickHandler)
+            async function clickHandler() {
+                console.log(location.pathname)
+                const [, , , board_idx] = location.pathname.split('/')
+                location.href = `/board/write/${board_idx}`
+            }
+
+            //delete
+            const deleteFrm = document.querySelector('#deleteFrm')
+            deleteFrm.addEventListener('submit', submitHandler)
+            async function submitHandler(e) {
+                e.preventDefault()
+                const body = {
+                    board_idx
+                }
+                try {
+                    const response = await axios.post('/delete', body, {
+                        'Content-Type': 'application/json',
+                        withCredentials: true
+                    })
+                    if (response.data.errno === 0) throw new Error;
+                    console.log('글 삭제가 완료되었습니다.')
+                } catch (e) {
+                    console.log(e.message)
+                }
+            }
+        }
+    </script>
+    </div>
+
+
+    <!-- CREATE TABLE board (
+    board_idx INT AUTO_INCREMENT,
+    user_nickname VARCHAR(20) NOT NULL ,
+    board_subject VARCHAR(50) NOT NULL,
+    board_content TEXT ,
+    board_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    board_hit INT DEFAULT 0 NOT NULL,
+    PRIMARY KEY(board_idx)
+) CHARSET = utf8mb4; -->
+</body>
+
+</html>

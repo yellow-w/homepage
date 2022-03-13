@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <main class="boardBox">
+        <table>
+            <caption>board list</caption>
+            <thead>
+                <tr>
+                    <th class="board_idx">글번호</th>
+                    <th class="board_subject">제목</th>
+                    <th class="board_nickname">닉네임</th>
+                    <th class="board_date">작성일</th>
+                    <th calss="board_hit">조회수</th>
+                </tr>
+            </thead>
+            <tbody class="board_content">
+                <tr id ="tr_content">
+                    <td class="board_value">번호</td>
+                    <td class="board_value">제목</td>
+                    <td class="board_value">닉네임</td>
+                    <td class="board_value">작성일</td>
+                    <td class="board_value">조회수</td>
+                </tr>
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </main>
+
+    <script type ="text/javascript">
+        init()
+        async function init(){
+            axios.defaults.baseURL = 'http://localhost:4001/api/board'
+
+            const boardLists = document.querySelectorAll('.board_value')
+            try{
+                const body = {}
+                const response = await axios.post('/list',body, {
+                    'Content-Type': 'application/json',
+                    withCredentials: true
+                })
+                // console.log(boardLists[i])
+                const lists = response.data.result
+                
+            } catch(e){
+                console.log(e.message)
+            }
+
+        }
+    </script>
+
+
+        <!-- CREATE TABLE board (
+    board_idx INT AUTO_INCREMENT,
+    user_nickname VARCHAR(20) NOT NULL ,
+    board_subject VARCHAR(50) NOT NULL,
+    board_content TEXT ,
+    board_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    board_hit INT DEFAULT 0 NOT NULL,
+    PRIMARY KEY(board_idx)
+) CHARSET = utf8mb4; -->
+</body>
+</html>
