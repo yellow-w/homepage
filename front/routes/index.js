@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userRouter = require('../routes/user')
 const boardRouter = require('../routes/board')
-const Auth = require('../middlewares/auth').auth
+const {Auth} = require('../middlewares/auth')
 
 router.use('/board', Auth, boardRouter)
 router.use('/user',userRouter)

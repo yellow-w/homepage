@@ -5,3 +5,7 @@ exports.signUp = (req,res) => {
 exports.signIn = (req,res) => {
     res.render('signin')
 }
+
+exports.profile = (req,res) => {
+    res.render('profile')
+}

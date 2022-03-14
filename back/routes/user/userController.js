@@ -19,7 +19,7 @@ exports.idCheck = async (req, res) => {
             errno: 0
         };
     } catch (e) {
-        console.log(e.message)
+        console.log(e.message,'idcheck 미들웨어 에러')
     }
     res.json(response)
 }
@@ -40,7 +40,7 @@ exports.signUp = async (req, res) => {
             errno: 0
         }
     } catch (e) {
-        console.log('에러발생', e.message)
+        console.log(e.message,'signup 미들웨어 에러')
     }
     res.json(response)
 }
@@ -71,8 +71,26 @@ exports.signIn = async (req, res) => {
         })
         // res.setHeader('Set-Cookie',`token=${jwt}; httpOnly; secure; path=/; domain=localhost;`);
     } catch (e) {
-        console.log(e.message, '로그인 정보가 일치하지 않습니다.')
+        console.log(e.message, 'signing 미들웨어 에러')
     }
     res.json(response)
 }
 
+exports.profile = async(req,res) =>{
+    const { user_id } = req.body
+    const prepare = [user_id]
+    let response = {
+        result:[],
+        errno:1
+    }
+    try{
+        const result = await pool.execute(SQL.profile,prepare)
+        response = {
+            result,
+            errno:0
+        }
+    } catch(e){
+        console.log(e.message,'profile 미들웨어 에러')
+    }
+    res.json(response)
+}

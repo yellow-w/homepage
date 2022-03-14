@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    
+    <table>
+        <tr>
+            <th>아이디</th>
+            <td class ="profile_value" id="user_id"></td>
+        </tr>
+        <tr>
+            <th>닉네임</th>
+            <td class ="profile_value" id="user_nickname"></td>
+        </tr>
+        <tr>
+            <th>이름</th>
+            <td class ="profile_value" id="user_name"></td>
+        </tr>
+        <tr>
+            <th>성별</th>
+            <td class ="profile_value" id="user_gender"></td>
+        </tr>
+        <tr>
+            <th>생년월일</th>
+            <td class ="profile_value" id="user_dob"></td>
+        </tr>
+        <tr>
+            <th>휴대폰 번호</th>
+            <td class ="profile_value" id="user_mobile"></td>
+        </tr>
+        <tr>
+            <th>이메일</th>
+            <td class ="profile_value" id="user_email"></td>
+        </tr>
+        <tr>
+            <th>가입일</th>
+            <td class ="profile_value" id="user_dos"></td>
+        </tr>
+        <tr>
+            <th>회원 등급</th>
+            <td class ="profile_value" id="user_level"></td>
+        </tr>
+    </table>
+    <script type="text/javascript">
+        function GetUserProfile(){
+            axios.defaults.baseURL = 'http://localhost:4001/api/user'
+            console.log(req.cookies)
+        }
+GetUserProfile()
+    </script>
+</body>
+</html>

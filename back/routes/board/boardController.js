@@ -8,14 +8,17 @@ exports.list = async (req, res) => {
     }
     try {
         const [result] = await pool.execute(SQL.boardList)
+        const [[{totalRecords}]] = await pool.execute(SQL.boardTotalRecords)
         response = {
-            result,
-            errno: 0
+            ...response,
+            totalRecords,
+            errno: 0,
+            result
         }
     } catch (e) {
-        console.log(e.message)
+        console.log(e.message, 'list 미들웨어 에러')
     }
-    res.send(response)
+    res.json(response)
 }
 
 exports.write = async (req, res) => {
@@ -28,7 +31,6 @@ exports.write = async (req, res) => {
     }
     try {
         const [result] = await pool.execute(SQL.boardWrite, prepare)
-        console.log(result)
         const response = {
             result: {
                 affectedRows: result.affectedRows,
@@ -37,9 +39,9 @@ exports.write = async (req, res) => {
             errno: 0
         }
     } catch (e) {
-        console.log(e.message, '글쓰기 실패')
+        console.log(e.message, 'write 미들웨어 에러')
     }
-    res.send(response)
+    res.json(response)
 }
 
 exports.view = async (req, res) => {
@@ -56,11 +58,10 @@ exports.view = async (req, res) => {
             result,
             errno: 0
         }
-        console.log(response)
     } catch (e) {
         console.log(e.message)
     }
-    res.send(response)
+    res.json(response)
 }
 
 exports.update = async (req, res) => {
@@ -79,11 +80,10 @@ exports.update = async (req, res) => {
             },
             errono: 0
         }
-        console.log(response)
     } catch (e) {
-        console.log(e.message)
+        console.log(e.message, 'update 미들웨어 에러')
     }
-    res.send(response)
+    res.json(response)
 }
 
 exports.delete = async (req, res) => {
@@ -93,14 +93,15 @@ exports.delete = async (req, res) => {
         errno: 1
     }
     try {
-        const [result] = await pool.execute(SQL.boardDelete, prepare)
+        let [result] = await pool.execute(SQL.boardDelete, prepare)
+        delete result.user_pw
+        result = {...result}
         const response = {
             result,
             errno: 0
         }
-        console.log(result)
     } catch (e) {
-        console.log(e.message)
+        console.log(e.message,'delete 미들웨어 에러')
     }
-    res.send(response)
+    res.json(response)
 }

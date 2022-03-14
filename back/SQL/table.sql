@@ -25,3 +25,6 @@ CREATE TABLE board (
     board_hit INT DEFAULT 0 NOT NULL,
     PRIMARY KEY(board_idx)
 ) CHARSET = utf8mb4;
+
+
+INSERT INTO board (board_subject,user_nickname) SELECT board_subject,user_nickname FROM board;

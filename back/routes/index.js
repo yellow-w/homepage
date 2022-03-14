@@ -6,8 +6,9 @@ const authRouter = require('../routes/auth/authController')
 
 router.use('/api/board', boardRouter)
 router.use('/api/user',userRouter)
-router.use('/api/auth',authRouter.auth)
+router.use('/api/auth',authRouter.Auth)
 router.get('/',(req,res)=>{
+    console.log(req.user)
     res.send('hi')
 })
 

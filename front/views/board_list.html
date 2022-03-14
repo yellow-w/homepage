@@ -1,15 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
+    <style>
+        #board {
+            width: 95vw;
+            text-align: center;
+        }
+
+        #board td {
+            padding: 7px 14px;
+            border-bottom: 1px solid #eee;
+            height: 7vh;
+
+        }
+
+        #board th {
+            background: #eee;
+            border-bottom: 2px solid #333;
+            height: 9vh;
+        }
+
+        #board .board_subject {
+            width: 40vw;
+        }
+
+        #paging ul {
+            display: flex;
+        }
+        #paging li {
+            list-style: none;
+        }
+
+    </style>
 </head>
+
 <body>
     <main class="boardBox">
-        <table>
+        <table cellspacing="0" cellpadding="0" id="board">
             <caption>board list</caption>
             <thead>
                 <tr>
@@ -21,49 +54,117 @@
                 </tr>
             </thead>
             <tbody class="board_content">
-                <tr id ="tr_content">
-                    <td class="board_value">번호</td>
-                    <td class="board_value">제목</td>
-                    <td class="board_value">닉네임</td>
-                    <td class="board_value">작성일</td>
-                    <td class="board_value">조회수</td>
-                </tr>
             </tbody>
-            <tfoot></tfoot>
+            <tfoot>
+                <div id="paging">
+                    <ul></ul>
+                </div>
+            </tfoot>
         </table>
+
+        <template class="board_row">
+            <tr>
+                <td>{idx}</td>
+                <td>{subject}</td>
+                <td>{nickname}</td>
+                <td>{date}</td>
+                <td>{hit}</td>
+            </tr>
+        </template>
+
     </main>
 
-    <script type ="text/javascript">
+    <script type="text/javascript">
+        //전역변수 선언
+        let test = {}
+
         init()
-        async function init(){
+        async function init() {
             axios.defaults.baseURL = 'http://localhost:4001/api/board'
 
             const boardLists = document.querySelectorAll('.board_value')
-            try{
-                const body = {}
-                const response = await axios.post('/list',body, {
+            try {
+                const response = await axios.post('/list', {
                     'Content-Type': 'application/json',
                     withCredentials: true
                 })
-                // console.log(boardLists[i])
-                const lists = response.data.result
-                
-            } catch(e){
+
+                //전역변수에 결과값 삽입
+                test = {
+                    ...response
+                }
+
+                //에러처리
+                if (response.data.errno !== 0) throw new Errow('board_list 에러');
+
+                //결과 테이블에 뿌리기
+                const trElement = document.querySelector('.board_row').innerHTML
+                let template = ''
+
+                const Nodes = response.data.result
+                Nodes.forEach(v => {
+                    template += trElement.replace('{idx}', v.board_idx)
+                        .replace('{subject}', v.board_subject)
+                        .replace('{content}', v.board_content)
+                        .replace('{date}', v.board_date)
+                        .replace('{nickname}', v.user_nickname)
+                        .replace('{hit}', v.board_hit)
+                })
+                const tbody = document.querySelector('tbody')
+                tbody.innerHTML = template
+
+                //페이징
+                const { totalRecords } = response.data
+                const displayArticle = 20;
+                const displayBlock = 5;
+
+                const totalPage = Math.ceil(totalRecords / displayArticle) //12
+                const totalBlock = Math.ceil(totalPage / displayBlock) //3
+                console.log(totalPage, totalBlock)
+
+
+                const page = 1;
+                const currentBlock = Math.ceil(page / displayBlock)
+                const startBlock = (currentBlock - 1) * displayBlock
+                const endBlock = currentBlock * displayBlock //시작지점부터 보여주고 싶은 블럭을 더함
+
+                if (endBlock > totalPage) endBlock = totalPage;
+                console.log('시작 페이지 : ', startBlock)
+                console.log('끝 페이지 : ', endBlock)
+                console.log('현재블럭 : ', currentBlock)
+
+                const paging = document.querySelector('#paging ul')
+                for (let i = startBlock + 1; i <= endBlock; i++) {
+                    const liElement = document.createElement('li')
+                    const aElement = document.createElement('a')
+                    aElement.setAttribute('onClick', `setPage(${i})`)
+                    aElement.innerHTML = `[${i}]`
+                    liElement.appendChild(aElement)
+                    paging.appendChild(liElement)
+                }
+
+            } catch (e) {
                 console.log(e.message)
             }
+        }
+        function setPage(num) {
+            const trElement = document.querySelector('.board_row').innerHTML
+            const displayArticle = 20;
+            const Nodes = test.data.result.slice((num - 1) * displayArticle, num * displayArticle);
+            let template = ''
 
+            Nodes.forEach(v => {
+                template += trElement.replace('{idx}', v.board_idx)
+                    .replace('{subject}', v.board_subject)
+                    .replace('{content}', v.board_content)
+                    .replace('{date}', v.board_date)
+                    .replace('{nickname}', v.user_nickname)
+                    .replace('{hit}', v.board_hit)
+            })
+            const tbody = document.querySelector('tbody')
+            tbody.innerHTML = template
         }
     </script>
-
-
-        <!-- CREATE TABLE board (
-    board_idx INT AUTO_INCREMENT,
-    user_nickname VARCHAR(20) NOT NULL ,
-    board_subject VARCHAR(50) NOT NULL,
-    board_content TEXT ,
-    board_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    board_hit INT DEFAULT 0 NOT NULL,
-    PRIMARY KEY(board_idx)
-) CHARSET = utf8mb4; -->
 </body>
+
 </html>

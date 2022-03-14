@@ -29,11 +29,13 @@
                         'Content-Type': 'application/json',
                         withCredentials: true
                     })
+                    console.log(response.data)
+
                     if(response.data.errno === 1 ) throw new Error;
                     alert(`${response.data.result.user_id}님 환영합니다.`)
                     location.href ='/'
                 } catch (e) {
-                    console.log(e.message,'회원가입불가')
+                    console.log(e.message,'로그인불가')
                     msg.innerHTML = '로그인 정보를 확인해주세요'
                 }
             }

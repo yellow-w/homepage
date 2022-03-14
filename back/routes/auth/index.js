@@ -2,6 +2,6 @@ const express = require('express')
 const router = express.Router()
 const authController = require('./authController')
 
-router.post('/',authController.auth)
+router.post('/',authController.Auth)
 
 module.exports = router
